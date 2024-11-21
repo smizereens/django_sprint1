@@ -47,6 +47,12 @@ posts = [
 posts_dict = {post['id']: post for post in posts}
 
 
+category_posts_dict = {}
+for post in posts:
+    category = post['category']
+    category_posts_dict.setdefault(category, []).append(post)
+
+
 def index(request):
     reversed_posts = posts[::-1]
     context = {'posts': reversed_posts}
@@ -62,7 +68,7 @@ def post_detail(request, post_id):
 
 
 def category_posts(request, category_slug):
-    filtered_posts = [post for post in posts if post['category'] == category_slug]
+    filtered_posts = category_posts_dict.get(category_slug)
     if not filtered_posts:
         raise Http404("Категория не найдена")
     context = {
