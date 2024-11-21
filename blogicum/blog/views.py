@@ -1,4 +1,3 @@
-# blog/views.py
 from django.shortcuts import render
 from django.http import Http404
 
@@ -45,24 +44,29 @@ posts = [
     },
 ]
 
+posts_dict = {post['id']: post for post in posts}
+
+
 def index(request):
-    reversed_posts = posts[::-1]  # Инвертируем список постов
+    reversed_posts = posts[::-1]
     context = {'posts': reversed_posts}
     return render(request, 'blog/index.html', context)
 
-def post_detail(request, id):
-    post = next((post for post in posts if post['id'] == id), None)
+
+def post_detail(request, post_id):
+    post = posts_dict.get(post_id)
     if post is None:
         raise Http404("Пост не найден")
     context = {'post': post}
     return render(request, 'blog/detail.html', context)
+
 
 def category_posts(request, category_slug):
     filtered_posts = [post for post in posts if post['category'] == category_slug]
     if not filtered_posts:
         raise Http404("Категория не найдена")
     context = {
-        'category_slug': category_slug,  # Передача slug в шаблон
+        'category_slug': category_slug,
         'posts': filtered_posts,
     }
     return render(request, 'blog/category.html', context)
