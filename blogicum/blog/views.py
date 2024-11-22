@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import Http404
+
 
 posts = [
     {
@@ -44,35 +44,21 @@ posts = [
     },
 ]
 
-posts_dict = {post['id']: post for post in posts}
-
-
-category_posts_dict = {}
-for post in posts:
-    category = post['category']
-    category_posts_dict.setdefault(category, []).append(post)
-
 
 def index(request):
-    reversed_posts = posts[::-1]
-    context = {'posts': reversed_posts}
+    context = {"posts": reversed(posts)}
     return render(request, 'blog/index.html', context)
 
 
-def post_detail(request, post_id):
-    post = posts_dict.get(post_id)
-    if post is None:
-        raise Http404("Пост не найден")
+def post_detail(request, id):
+    # Ищем пост по ID
+    post = next((post for post in posts if post['id'] == id), None)
+    if not post:
+        return render(request, '404.html', status=404)
     context = {'post': post}
     return render(request, 'blog/detail.html', context)
 
 
 def category_posts(request, category_slug):
-    filtered_posts = category_posts_dict.get(category_slug)
-    if not filtered_posts:
-        raise Http404("Категория не найдена")
-    context = {
-        'category_slug': category_slug,
-        'posts': filtered_posts,
-    }
+    context = {'category_slug': category_slug}
     return render(request, 'blog/category.html', context)
