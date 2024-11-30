@@ -1,3 +1,4 @@
+from django.http import HttpResponseNotFound, Http404
 from django.shortcuts import render
 
 
@@ -45,16 +46,18 @@ posts = [
 ]
 
 
+other_posts = {post['id']: post for post in posts}
+
+
 def index(request):
     context = {"posts": reversed(posts)}
     return render(request, 'blog/index.html', context)
 
 
-def post_detail(request, id):
-    # Ищем пост по ID
-    post = next((post for post in posts if post['id'] == id), None)
-    if not post:
-        return render(request, '404.html', status=404)
+def post_detail(request, post_id):
+    post = other_posts.get(post_id)
+    if post_id not in other_posts.keys():
+        raise Http404(f"Публикация {post_id} не найдена")
     context = {'post': post}
     return render(request, 'blog/detail.html', context)
 

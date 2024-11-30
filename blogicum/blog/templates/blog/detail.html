@@ -45,10 +45,10 @@
         <article>
           <ul>
             <li>
-              Место: Остров отчаянья              
+              Место: {{post.location}}
             </li>
             <li>
-              Дата: 25 октября 1659 года
+              Дата: {{post.date}}
             </li>
             <li>Категория: 
               <a href="{% url 'blog:category_posts' post.category %}">
